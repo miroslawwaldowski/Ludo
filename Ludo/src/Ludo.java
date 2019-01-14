@@ -1,9 +1,18 @@
 
 public class Ludo {
-
+	
+	
+	Player[] player = new Player[4];
+	
 	public static void main(String[] args) {
 		
-		Board board = new Board();
+
+		Ludo game=new Ludo();
+
+
+		
+		
+		/*Board board = new Board();
 		Player red = new Player("red", 0);
 		
 		Dice dice = new Dice();
@@ -29,11 +38,27 @@ public class Ludo {
 		}
 		
 		System.out.println("pozycja " +red.getColor() + ": "  + red.pawn[1].getPosition());
+		*/
 		
+		//new StartMenu();
+		//new MainWindow();
 		
-		new MainWindow();
 		
 
 	}
+
+	public Ludo() {
+		
+		for (int i=0;i<4;i++) {
+			player[i]=new Player();
+		}
+		new StartMenu();
+	};
+	
+	
+	
+	
+	
+
 
 }

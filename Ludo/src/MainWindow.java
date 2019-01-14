@@ -29,7 +29,7 @@ public class MainWindow extends JFrame{
 		 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		 		this.setTitle("Chiñczyk");
 		 		JPanel thePanel = new JPanel();
-		 		JPanel MasterthePanel = new JPanel();
+
 		 		
 		         thePanel.setLayout(null);
 		         
@@ -70,10 +70,11 @@ public class MainWindow extends JFrame{
 		         JButton button1 = new JButton("Losuj");
 		         button1.setBounds((width/2)-(buttonWidth)-((buttonWidth/6)), height - buttonHeight - 40, buttonWidth*2, buttonHeight);
 		         
-		         
 
-		         MasterthePanel.add(thePanel);
+		         thePanel.add(button1);
 		         this.add(thePanel);
+		         
+		         
 		         
 		         
 		         this.setVisible(true);
