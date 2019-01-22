@@ -1,5 +1,5 @@
 import java.awt.Choice;
-
+import java.awt.Color;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -7,38 +7,61 @@ import javax.swing.JTextField;
 public class Player {
 	
 	private int number;
-	private String color;
-	int y=0;
+	private Color color;
+	private boolean active;
+
 	
 	private Choice typPlayer;
 	private JLabel numberPlayer;
 	private JTextField namePlayer;
 	
-	
-	
+
 	
 	Pawn[] pawn = new Pawn[4];
 	
   
-	public String getColor () {return color;}
+	public Color getColor () {return color;}
 	public int getNumber () {return number;}
 	public Choice getTypPlayer() {return typPlayer;}
+	public JLabel getNumberPlayer() {return numberPlayer;}
+	public JTextField getNamePlayer() {return namePlayer;}
+	public Pawn getPawn (int i) {return pawn[i];}
+	public boolean getActive () {return active;}
+
 	
+	public void setActive (boolean b) {
+		this.active = b;
+	}
 	
-	public void setColor (String color) {this.color = color;}
-	public void setNumber (int number) {this.number = number;}
+	public void setColor (Color color) {
+		this.color = color;
+		this.numberPlayer.setBackground(this.color);
+		this.numberPlayer.setOpaque(true);
+		}
+	
+	public void setNumber (int number) {
+		this.number = number;
+		this.numberPlayer.setText(Integer.toString(this.number+1));
+		}
+	
 	public void setTypPlayer(Choice typPlayer) {this.typPlayer = typPlayer;}
+
 	
 	
 	
 	public Player() {
 		
 		this.namePlayer=new JTextField();
+
 		this.numberPlayer=new JLabel();
+		
 		this.typPlayer =new Choice();
+		
 		this.typPlayer.add("Gracz");
 		this.typPlayer.add("Komputer");
+		this.typPlayer.add("Brak");
 		this.typPlayer.select("Gracz");
+		
 		
 		for (int i=0; i<4; i++)
 		{
