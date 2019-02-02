@@ -1,10 +1,13 @@
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 
 @SuppressWarnings("serial")
-public class MainWindow extends JFrame{
-
+public class MainWindow extends JFrame implements ActionListener{
+	 JButton button1;
 	 public MainWindow(){
 		 		
 	 			int buttonHeight = 45;
@@ -59,17 +62,18 @@ public class MainWindow extends JFrame{
 		         
 		         
 		         for (int i=0;i<9;i++) {
-		        	 butt[YellowTablica[i]].setBackground(Color.yellow);
-		        	 butt[BlueTablica[i]].setBackground(Color.blue);
-		        	 butt[RedTablica[i]].setBackground(Color.red);
-		        	 butt[GreenTtablica[i]].setBackground(Color.green);
+		        	 butt[YellowTablica[i]].setBackground(Ludo.Cyellow);
+		        	 butt[BlueTablica[i]].setBackground(Ludo.Cblue);
+		        	 butt[RedTablica[i]].setBackground(Ludo.Cred);
+		        	 butt[GreenTtablica[i]].setBackground(Ludo.Cgreen);
 		         }
 		         
 		  
 		         
-		         JButton button1 = new JButton("Losuj");
+		         button1 = new JButton("Losuj");
 		         button1.setBounds((width/2)-(buttonWidth)-((buttonWidth/6)), height - buttonHeight - 40, buttonWidth*2, buttonHeight);
 		         
+		         button1.addActionListener(this);
 
 		         thePanel.add(button1);
 		         this.add(thePanel);
@@ -98,5 +102,14 @@ public class MainWindow extends JFrame{
 
 	        return result;
 	    }
+
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == button1) {
+			dispose();
+		}
+		
+	}
 
 }

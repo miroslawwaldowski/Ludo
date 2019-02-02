@@ -58,7 +58,8 @@ public class Player {
 		this.typPlayer =new Choice();
 		
 		this.typPlayer.add("Gracz");
-		this.typPlayer.add("Komputer");
+		this.typPlayer.add("Komputer - ³atwy");
+		this.typPlayer.add("Komputer - trudny");
 		this.typPlayer.add("Brak");
 		this.typPlayer.select("Gracz");
 		
