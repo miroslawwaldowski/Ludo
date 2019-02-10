@@ -4,14 +4,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
+
+
+@SuppressWarnings("serial")
 public class Ludo extends JFrame implements ActionListener{
 	
 	Player[] player = new Player[4];
@@ -22,7 +25,8 @@ public class Ludo extends JFrame implements ActionListener{
 	public static Color Cgreen = new Color(50,250,50);
 	
 	
-		
+	JFrame StartMenu, MainWindow;	
+	
 	JButton buttonStart, buttonClose, buttonRoll;
 	
 	int activePlayer, amountPlayers;
@@ -63,7 +67,7 @@ public class Ludo extends JFrame implements ActionListener{
 			break;
 			}
 		}
-		StartMenu();
+		StartMenu = new StartMenu();
 
 	};
 	
@@ -78,9 +82,11 @@ public class Ludo extends JFrame implements ActionListener{
 	}
 	
 
-
-
-	public void StartMenu() {
+	
+	
+	class StartMenu extends JFrame{
+	
+		public StartMenu() {
 			
 		
 		
@@ -140,8 +146,8 @@ public class Ludo extends JFrame implements ActionListener{
  		buttonStart.setBounds(50, 190, 160, 40);
  		buttonClose.setBounds(230, 190, 160, 40);
  		
- 		buttonStart.addActionListener(new buttonStartListener());
- 		buttonClose.addActionListener(this);
+ 		buttonStart.addActionListener(new buttonStartMenuListener());
+ 		buttonClose.addActionListener(new buttonStartMenuListener());
  		
  		
  		
@@ -151,16 +157,12 @@ public class Ludo extends JFrame implements ActionListener{
  		
  		this.add(thePanel);        
         this.setVisible(true);
+		}
 	}
 	
+	class MainWindow extends JFrame{
 	
-//	public void PlayerSet () {
-//		for (int i=0;i<4;i++) {
-//
-//		}
-//	}
-
-	public void MainWindow(){
+		public MainWindow(){
  		
 		int buttonHeight = 45;
 		int buttonWidth = 45;
@@ -183,10 +185,10 @@ public class Ludo extends JFrame implements ActionListener{
  		this.setResizable(false);
  		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
  		this.setTitle("Chiñczyk");
- 		JPanel thePanel = new JPanel();
+ 		JPanel thePanel2 = new JPanel();
 
  		
-         thePanel.setLayout(null);
+         thePanel2.setLayout(null);
          
 
          JButton butt[]=new JButton[72];
@@ -201,7 +203,7 @@ public class Ludo extends JFrame implements ActionListener{
 		        	 butt[nameField].setBounds(posx, posy, buttonWidth, buttonHeight);
 		        	 butt[nameField].setEnabled(false);
 		        	 butt[nameField].setFont(new Font("Arial", Font.PLAIN, 8));
-		        	 thePanel.add(butt[nameField]);
+		        	 thePanel2.add(butt[nameField]);
 		        	 nameField++;
         	      }	 
         		 posx = posx+buttonWidth;
@@ -219,53 +221,67 @@ public class Ludo extends JFrame implements ActionListener{
         	 butt[RedTablica[i]].setBackground(Ludo.Cred);
         	 butt[GreenTtablica[i]].setBackground(Ludo.Cgreen);
          }
-         
-  
-         
-         buttonRoll = new JButton("Rzuæ kostk¹");
-         buttonRoll.setBounds((width/2)-(buttonWidth)-((buttonWidth/6)), height - buttonHeight - 40, buttonWidth*2, buttonHeight);
-         
-         buttonRoll.addActionListener(this);
 
-         thePanel.add(buttonRoll);
-         this.add(thePanel);
+         
+         buttonRoll = new JButton();
+         buttonRoll.setBounds((width/2)-(buttonWidth)-((buttonWidth/6)), height - buttonHeight - 40, buttonWidth*2, buttonHeight);
+         //buttonRoll.addActionListener(this);
+         buttonRoll.setIcon(new ImageIcon ( PawnImage.PawnIcon(Cred)));
+
+         thePanel2.add(buttonRoll);
+         this.add(thePanel2);
          
          
          
          
          this.setVisible(true);
-
-
-
+     	
+         
          
 }
 
-	public static boolean contains(final int[] array, final int v) {
+		private boolean contains(int[] tablica, int number) {
+			
+			boolean result = false;
 
-        boolean result = false;
+	        for(int i : tablica){
+	            if(i == number){
+	                result = true;
+	                break;
+	            }
+	        }
 
-        for(int i : array){
-            if(i == v){
-                result = true;
-                break;
-            }
-        }
+	        return result;
 
-        return result;
-    }
+		}
+	}
+	
+
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		 if (e.getSource() == buttonClose) {
-			System.exit(EXIT_ON_CLOSE);		
-		}
+		
 		
 	}
 	
-	public void start() {
-		removeAll();
+	public void setGame() {
+
+		for (int i=0;i<4;i++) {
+			for (int j=0;j<4;j++) {
+				player[i].pawn[j].setPosition(player[i].pawn[j].getHomePosition());
+			}
+		}
+		
+		StartMenu.dispose();
+
+		MainWindow = new MainWindow();
+		
+		//repaint();
 	}
 		
+
+
+
 	class typPlayerListener implements ItemListener {
 
 		@Override
@@ -285,16 +301,19 @@ public class Ludo extends JFrame implements ActionListener{
 	}
 
 
-	class buttonStartListener implements ActionListener {
+	class buttonStartMenuListener implements ActionListener {
 
 
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		
+			 
+			if (e.getSource() == buttonClose) {
+					System.exit(EXIT_ON_CLOSE);		
+			}else if (e.getSource() == buttonStart){
+				
 			for (int i=0;i<4;i++) {
-			
-		 
+					 
 			player[i].setTypPlayerSet(player[i].getTypPlayer().getSelectedIndex());
 			player[i].setName(player[i].getNamePlayer().getText());
 			
@@ -312,8 +331,10 @@ public class Ludo extends JFrame implements ActionListener{
 		
 			System.out.println("start");
 			
-			start();
-			
+			setGame();
+			} else {
+				//nothing
+			}
 		}
 	}
 }
