@@ -10,11 +10,12 @@ public class PawnImage {
 		Graphics g = bufferedImage.getGraphics();
 		g.setColor(Color.black);
 		g.fillOval(0,0,24,24);
-		g.setColor(c);
+		g.setColor(Color.gray);
 		g.fillOval(2,2,20,20);
-
+		g.setColor(c);
+		g.fillOval(4,4,16,16);
 		
 		return bufferedImage;
-		
 	}
+
 }

@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,12 +23,16 @@ public class Ludo extends JFrame implements ActionListener{
 	public static Color Cyellow = new Color(255,215,0);
 	public static Color Cgreen = new Color(50,250,50);
 	
+	Dice dice = new Dice();
 	
 	JFrame StartMenu, MainWindow;	
-	
 	JButton buttonStart, buttonClose, buttonRoll;
+	JButton butt[]=new JButton[72];
+	JLabel score;
 	
 	int activePlayer, amountPlayers;
+	
+
 
 
 	public Ludo() {
@@ -66,6 +69,7 @@ public class Ludo extends JFrame implements ActionListener{
 	 		 		 player[i].pawn[3].setHomePosition(13);
 			break;
 			}
+			player[i].setPawnIcon();
 		}
 		StartMenu = new StartMenu();
 
@@ -178,30 +182,25 @@ public class Ludo extends JFrame implements ActionListener{
  		int GreenTtablica [] = {4,5,6,10,12,13,15,18,25};
  		int BlueTablica [] = {58,59,65,66,61,56,53,67,46};
  		int RedTablica [] = {36,37,38,39,51,63,64,70,71};
- 		
- 		
+ 			
  		this.setSize(width,height);
  		this.setLocationRelativeTo(null);
  		this.setResizable(false);
  		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
  		this.setTitle("Chiñczyk");
  		JPanel thePanel2 = new JPanel();
-
- 		
-         thePanel2.setLayout(null);
-         
-
-         JButton butt[]=new JButton[72];
-         
+ 		thePanel2.setLayout(null);
+       
          for (int i =0; i<11; i++) {
         	 
         	 for (int y = 0; y<11; y++) {
         	 
         		 if(contains(tablica, number)){
         		 } else {
-   		        	 butt[nameField] = new JButton(Integer.toString(nameField));
+   		        	 butt[nameField] = new JButton(/*Integer.toString(nameField)*/);
 		        	 butt[nameField].setBounds(posx, posy, buttonWidth, buttonHeight);
 		        	 butt[nameField].setEnabled(false);
+		        	 butt[nameField].setBackground(Color.white);
 		        	 butt[nameField].setFont(new Font("Arial", Font.PLAIN, 8));
 		        	 thePanel2.add(butt[nameField]);
 		        	 nameField++;
@@ -221,47 +220,43 @@ public class Ludo extends JFrame implements ActionListener{
         	 butt[RedTablica[i]].setBackground(Ludo.Cred);
         	 butt[GreenTtablica[i]].setBackground(Ludo.Cgreen);
          }
-
          
-         buttonRoll = new JButton();
-         buttonRoll.setBounds((width/2)-(buttonWidth)-((buttonWidth/6)), height - buttonHeight - 40, buttonWidth*2, buttonHeight);
-         //buttonRoll.addActionListener(this);
-         buttonRoll.setIcon(new ImageIcon ( PawnImage.PawnIcon(Cred)));
+         for (int i=0;i<4;i++) {
+        	 if (player[i].getActive()) {
+        		 for (int j=0;j<4;j++) {
+ 					 butt[player[i].pawn[j].getPosition()].setIcon(player[i].getPawnIcon());
+         			 butt[player[i].pawn[j].getPosition()].setEnabled(true);
+				 }
+        	  }
+ 			}
+ 		
+       
+         buttonRoll = new JButton("Rzuæ kostk¹");
+         buttonRoll.setBounds((width/2)-(buttonWidth*2)-((buttonWidth/6)), height - buttonHeight - 40, buttonWidth*3, buttonHeight);
+         buttonRoll.addActionListener(new buttonMainWindowListener());
+         score = new JLabel();
+         score.setBounds((width/2)+(buttonWidth)+((buttonWidth/6)), height - buttonHeight - 40, buttonWidth*2, buttonHeight);
 
          thePanel2.add(buttonRoll);
-         this.add(thePanel2);
-         
-         
-         
-         
+         thePanel2.add(score);
+         this.add(thePanel2);         
          this.setVisible(true);
-     	
-         
          
 }
-
 		private boolean contains(int[] tablica, int number) {
-			
 			boolean result = false;
-
 	        for(int i : tablica){
 	            if(i == number){
 	                result = true;
 	                break;
 	            }
 	        }
-
 	        return result;
-
 		}
 	}
-	
-
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
-		
 	}
 	
 	public void setGame() {
@@ -276,7 +271,7 @@ public class Ludo extends JFrame implements ActionListener{
 
 		MainWindow = new MainWindow();
 		
-		//repaint();
+
 	}
 		
 
@@ -327,6 +322,7 @@ public class Ludo extends JFrame implements ActionListener{
 					}
 				}
 			System.out.println(player[i].getName());
+			System.out.println(player[i].getActive());
 			}
 		
 			System.out.println("start");
@@ -336,6 +332,25 @@ public class Ludo extends JFrame implements ActionListener{
 				//nothing
 			}
 		}
+	}
+	
+	class buttonMainWindowListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (e.getSource() == buttonRoll) {
+				dice.throwDice();
+				int scoreDice = (int)dice.getScore();
+				score.setText(Integer.toString(scoreDice));
+				if (butt[11].isEnabled()) {
+				butt[11].setEnabled(false);
+				}else {
+				butt[11].setEnabled(true);	
+				}
+			}
+			
+		}
+		
 	}
 }
 

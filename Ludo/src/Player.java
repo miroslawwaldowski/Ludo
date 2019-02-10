@@ -1,6 +1,6 @@
 import java.awt.Choice;
 import java.awt.Color;
-
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
@@ -17,6 +17,8 @@ public class Player {
 	private String name;
 	private JTextField namePlayer;
 	
+	private ImageIcon PawnIcon;
+	
 
 	
 	Pawn[] pawn = new Pawn[4];
@@ -31,6 +33,7 @@ public class Player {
 	public Pawn getPawn (int i) {return pawn[i];}
 	public boolean getActive () {return active;}
 	public int getTypPlayerSet () {return typPlayerSet;}
+	public ImageIcon getPawnIcon() {return PawnIcon;}
 	
 	public void setActive (boolean b) {this.active = b;}
 	public void setName (String s) {this.name = s;}
@@ -45,8 +48,10 @@ public class Player {
 		this.number = number;
 		this.numberPlayer.setText(Integer.toString(this.number+1));
 		}
-
-
+	public void setPawnIcon () {
+		this.PawnIcon = new ImageIcon (PawnImage.PawnIcon(this.color));
+		}
+	
 	public Player() {
 		
 		this.namePlayer=new JTextField();
@@ -60,6 +65,9 @@ public class Player {
 		this.typPlayer.add("Komputer - trudny");
 		this.typPlayer.add("Brak");
 		this.typPlayer.select("Gracz");
+		this.active=true;
+		
+		this.PawnIcon=new ImageIcon();
 		
 		
 		for (int i=0; i<4; i++)
