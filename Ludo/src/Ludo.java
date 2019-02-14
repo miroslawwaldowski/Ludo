@@ -5,13 +5,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
-
-
 
 @SuppressWarnings("serial")
 public class Ludo extends JFrame {
@@ -22,6 +21,7 @@ public class Ludo extends JFrame {
 	public static Color Cred = new Color(255,99,71);
 	public static Color Cyellow = new Color(255,215,0);
 	public static Color Cgreen = new Color(50,250,50);
+	public ImageIcon PawnIconDisable = new ImageIcon (PawnImage.PawnIcon());
 	
 	Dice dice = new Dice();
 	Board board = new Board();
@@ -32,9 +32,6 @@ public class Ludo extends JFrame {
 	JLabel score;
 	
 	int activePlayer, amountPlayers;
-	
-
-
 
 	public Ludo() {
 		
@@ -47,7 +44,7 @@ public class Ludo extends JFrame {
 			switch(i) {
 			case 0 :player[i].setColor(Cyellow);
 	 		 		player[i].setStartPoisition(20);
-	 		 		player[i].setEndPoisition(35);
+	 		 		player[i].setEndPoisition(31);
 	 		 		player[i].pawn[0].setHomePosition(0);
 	 		 		player[i].pawn[1].setHomePosition(1);
 	 		 		player[i].pawn[2].setHomePosition(7);
@@ -55,7 +52,7 @@ public class Ludo extends JFrame {
 			break;
 			case 1 :player[i].setColor(Cgreen);
 	 		 		player[i].setStartPoisition(4);
-	 		 		player[i].setEndPoisition(25);
+	 		 		player[i].setEndPoisition(3);
 	 		 		player[i].pawn[0].setHomePosition(5);
 	 		 		player[i].pawn[1].setHomePosition(6);
 	 		 		player[i].pawn[2].setHomePosition(12);
@@ -63,7 +60,7 @@ public class Ludo extends JFrame {
 			break;
 			case 2 :player[i].setColor(Cred);
 			 		player[i].setStartPoisition(51);
-			 		player[i].setEndPoisition(36);
+			 		player[i].setEndPoisition(40);
 			 		player[i].pawn[0].setHomePosition(63);
 			 		player[i].pawn[1].setHomePosition(64);
 			 		player[i].pawn[2].setHomePosition(70);
@@ -71,7 +68,7 @@ public class Ludo extends JFrame {
 			break;
 			case 3 :player[i].setColor(Cblue);
 					player[i].setStartPoisition(67);
-					player[i].setEndPoisition(46);
+					player[i].setEndPoisition(68);
 					player[i].pawn[0].setHomePosition(58);
 					player[i].pawn[1].setHomePosition(59);
 					player[i].pawn[2].setHomePosition(65);
@@ -85,16 +82,12 @@ public class Ludo extends JFrame {
 	};
 	
 	
-	
-	
 	public static void main(String[] args) {
 		
 		Ludo game=new Ludo();
 		game.setTitle("Chiñczyk - Wybór gry");
 		
 	}
-	
-
 	
 	
 	class StartMenu extends JFrame{
@@ -205,6 +198,7 @@ public class Ludo extends JFrame {
 		        	 butt[nameField].setBounds(posx, posy, buttonWidth, buttonHeight);
 		        	 butt[nameField].setBackground(Color.white);
 		        	 butt[nameField].setFont(new Font("Arial", Font.PLAIN, 8));
+		        	 butt[nameField].addActionListener(new buttonMainWindowListener());
 		        	 thePanel2.add(butt[nameField]);
 		        	 nameField++;
         	      }	 
@@ -261,13 +255,17 @@ public class Ludo extends JFrame {
 	}
 	
 	public void refreshBoard() {
+		
 		for (int z=0; z<butt.length;z++) {
 			butt[z].setIcon(null);
 		}
 		for (int i=0;i<4;i++) {
         	 if (player[i].getActive()) {
         		 for (int j=0;j<4;j++) {
+        			 //if (player[activePlayer].pawn[j].getActive()) {
  					 butt[player[i].pawn[j].getPosition()].setIcon(player[i].getPawnIcon());
+        			 //}else { butt[player[i].pawn[j].getPosition()].setIcon(PawnIconDisable);
+        			 //}
 				 }
         	  }
  			}
@@ -317,51 +315,187 @@ public class Ludo extends JFrame {
 	}
 
 	public void gamePlay() {
-		
-		if (player[activePlayer].pawn[0].getHome() && player[activePlayer].getDiceScore()==6) {
-			player[activePlayer].pawn[0].setPotentialPosition(player[activePlayer].getStartPoisition());
-			player[activePlayer].pawn[0].setPosition(player[activePlayer].pawn[0].getPotentialPosition());
-			player[activePlayer].pawn[0].setGo(true);
-			player[activePlayer].pawn[0].setHome(false);
-			player[activePlayer].pawn[0].setLeft(board.BOARD.length-1);
-		}else if (player[activePlayer].pawn[0].getGo()){
+		//funkcja wskazuje mo¿liwoœci
+		for (int i=0;i<4;i++) {
+			player[activePlayer].pawn[i].setPotentialPosition(player[activePlayer].pawn[i].getPosition());
+			player[activePlayer].pawn[i].setActive(false);
 			
-			player[activePlayer].pawn[0].setLeft(player[activePlayer].pawn[0].getLeft()-player[activePlayer].getDiceScore());
-			if (player[activePlayer].pawn[0].getLeft()<0) {
-				player[activePlayer].pawn[0].setGo(false);
-				player[activePlayer].pawn[0].setSafe(true);
-				int l = -(player[activePlayer].pawn[0].getLeft()-1);
-				if (l>3) {l=3;}
-								
+			if (player[activePlayer].pawn[i].getHome() && (player[activePlayer].getDiceScore()!=6)) {
+				player[activePlayer].pawn[i].setLeft(-99);
+			}
+			else 
+			if (player[activePlayer].pawn[i].getHome() && player[activePlayer].getDiceScore()==6) {
+				player[activePlayer].pawn[i].setPotentialPosition(player[activePlayer].getStartPoisition());
+				if(isBoardFreeByPlayer(i)) {
+					player[activePlayer].pawn[i].setLeft(board.BOARD.length-1);
+					player[activePlayer].pawn[i].setActive(true);
+				}else {
+					player[activePlayer].pawn[i].setActive(false);	
+					player[activePlayer].pawn[i].setLeft(-99);
+				}
+			}else 
+			if (player[activePlayer].pawn[i].getGo()){
+												
+				player[activePlayer].pawn[i].setLeft(calcLeft(i));
+				player[activePlayer].pawn[i].setLeft(player[activePlayer].pawn[i].getLeft()-player[activePlayer].getDiceScore());
+				if (player[activePlayer].pawn[i].getLeft()>=0) {
+					int x = board.getBoardElementPosition(player[activePlayer].pawn[i].getPosition());
+					x = x + player[activePlayer].getDiceScore();
+					if (x >= board.BOARD.length) {x= x-board.BOARD.length;}
+					player[activePlayer].pawn[i].setPotentialPosition(board.BOARD[x]);
+					if (isBoardFreeByPlayer(i)) {
+						player[activePlayer].pawn[i].setActive(true);
+					}else {
+						player[activePlayer].pawn[i].setActive(false);
+						}
+				}else if (player[activePlayer].pawn[i].getLeft()>-4){
+					int l = -(player[activePlayer].pawn[i].getLeft())-1;			
+					switch (activePlayer) {
+					case 0:	player[activePlayer].pawn[i].setPotentialPosition(board.YellowArray[l]);
+							if (isBoardFreeByPlayer(i)) {
+								player[activePlayer].pawn[i].setActive(true);
+							}else {
+								player[activePlayer].pawn[i].setActive(false);
+							}					
+							break;
+					case 1:	player[activePlayer].pawn[i].setPotentialPosition(board.GreenArray[l]);
+							if (isBoardFreeByPlayer(i)) {
+								player[activePlayer].pawn[i].setActive(true);
+							}else {
+								player[activePlayer].pawn[i].setActive(false);
+							}					
+							break;
+					case 2: player[activePlayer].pawn[i].setPotentialPosition(board.RedArray[l]);
+							if (isBoardFreeByPlayer(i)) {
+								player[activePlayer].pawn[i].setActive(true);
+							}else {
+								player[activePlayer].pawn[i].setActive(false);
+							}					
+							break;
+					case 3: player[activePlayer].pawn[i].setPotentialPosition(board.BlueArray[l]);
+							if (isBoardFreeByPlayer(i)) {
+								player[activePlayer].pawn[i].setActive(true);
+							}else {
+								player[activePlayer].pawn[i].setActive(false);
+							}					
+							break;
+					}
+					player[activePlayer].pawn[i].setActive(true);
+				}else {
+					player[activePlayer].pawn[i].setActive(false);
+				}
+			}else if (player[activePlayer].pawn[i].getSafe()) {
+				int l =board.getSafeElementPosition (player[activePlayer].pawn[i].getPosition(), activePlayer);
+				int y = l+player[activePlayer].getDiceScore();
+				if (y<4) {
 				switch (activePlayer) {
-				case 0:	player[activePlayer].pawn[0].setPosition(board.YellowArray[l]);
+				case 0:	player[activePlayer].pawn[i].setPotentialPosition(board.YellowArray[y]);
+						setWhenFree(i);
 						break;
-				case 1:	player[activePlayer].pawn[0].setPosition(board.GreenArray[l]);
+				case 1:	player[activePlayer].pawn[i].setPotentialPosition(board.GreenArray[y]);
+						setWhenFree(i);
 						break;
-				case 2: player[activePlayer].pawn[0].setPosition(board.RedArray[l]);
+				case 2: player[activePlayer].pawn[i].setPotentialPosition(board.RedArray[y]);
+						setWhenFree(i);
 						break;
-				case 3: player[activePlayer].pawn[0].setPosition(board.BlueArray[l]);
+				case 3: player[activePlayer].pawn[i].setPotentialPosition(board.BlueArray[y]);
+						setWhenFree(i);
 						break;
-
+					}
+				}
+				player[activePlayer].pawn[i].setActive(true);
+				
+			}else {player[activePlayer].pawn[i].setActive(false);
 				}
 				
-				
-				//player[activePlayer].pawn[0].setPotentialPosition(player[activePlayer].getEndPoisition());
-				//player[activePlayer].pawn[0].setPosition(player[activePlayer].pawn[0].getPotentialPosition());
-				
-			}else {
-			int x = board.getBoardElementPosition(player[activePlayer].pawn[0].getPosition());
-			x = x + player[activePlayer].getDiceScore();
-			if (x >= board.BOARD.length) {x= x-board.BOARD.length;}
-			player[activePlayer].pawn[0].setPotentialPosition(board.BOARD[x]);
-			player[activePlayer].pawn[0].setPosition(player[activePlayer].pawn[0].getPotentialPosition());
+		
+		}
+	}
+			
+	public int calcLeft(int i) {
+		int x = board.getBoardElementPosition(player[activePlayer].pawn[i].getPosition());
+		int y = board.getBoardElementPosition(player[activePlayer].getEndPoisition());
+		if (x<y) {return y-x;}
+		else if (x>y) {return board.BOARD.length-(x-y);}
+		else {return 0;}
+	}
+	
+	public void movePawn(int i) {
+		if (player[activePlayer].pawn[i].getActive()) {
+			if (player[activePlayer].pawn[i].getHome()){
+				player[activePlayer].pawn[i].setGo(true);
+				player[activePlayer].pawn[i].setHome(false);
+			} else if (player[activePlayer].pawn[i].getLeft()<0){
+				player[activePlayer].pawn[i].setGo(false);
+				player[activePlayer].pawn[i].setSafe(true);
 			}
-			
-			
-		}else {}
+
+		player[activePlayer].pawn[i].setPosition(player[activePlayer].pawn[i].getPotentialPosition());
+		setWhenKill(i);
+		}
+		
 		
 		
 	}
+	
+	public boolean isActivePawn() {
+		boolean x = false;
+		for (int i=0;i<4; i++) {
+			if (player[activePlayer].pawn[i].getActive()){
+				x = true;
+			}
+		}
+		return x;
+	}
+	
+	public boolean isStartFreeByPlayer() {
+		boolean x = true;
+		for (int i=0;i<4; i++) {
+			if (player[activePlayer].pawn[i].getPotentialPosition() == player[activePlayer].getStartPoisition()) {
+				x = false;
+			}
+		}
+		return x;
+	}
+	
+	public boolean isBoardFreeByPlayer(int i) {
+		boolean x = true;
+		for (int j=0;j<4; j++) {
+			if (player[activePlayer].pawn[i].getPotentialPosition() == player[activePlayer].pawn[j].getPosition()) {
+				x = false;
+			}
+		}
+		return x;
+	}
+	
+	public void setWhenFree(int i) {
+		if (isBoardFreeByPlayer(i)) {
+			player[activePlayer].pawn[i].setActive(true);
+		}else {
+			player[activePlayer].pawn[i].setActive(false);
+		}					
+	}
+	
+	public void setWhenKill (int i) {
+		
+		for (int k=0;k<4; k++) {
+			for (int j=0;j<4; j++) {
+				if (k != activePlayer) {
+					if (player[activePlayer].pawn[i].getPotentialPosition() == player[k].pawn[j].getPosition()) {
+						player[k].pawn[j].setActive(false);
+						player[k].pawn[j].setHome(true);
+						player[k].pawn[j].setGo(false);
+						player[k].pawn[j].setLeft(-99);
+						player[k].pawn[j].setSafe(false);
+						player[k].pawn[j].setPosition(player[k].pawn[j].getHomePosition());
+						
+					}
+				}
+			}
+		}
+
+	}
+
 	
 	class typPlayerListener implements ItemListener {
 
@@ -426,31 +560,58 @@ public class Ludo extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == buttonRoll) {
-				diceRoll();
-				gamePlay();
-				System.out.println("----------------");
-				System.out.println("gracz nr "+ activePlayer);
-				System.out.println("gracz color "+player[activePlayer].getColor());
-				System.out.println("gracz rzucil "+player[activePlayer].getDiceScore());
-				System.out.println("pozycja "+player[activePlayer].pawn[0].getPosition());
-				System.out.println("pozostalo "+player[activePlayer].pawn[0].getLeft());
-				
-				playerChange();
+				diceRoll(); //rzut kostk¹
+				gamePlay(); //oblicza potencjalne pozycje pionów po rzucie i ustawia czy aktywne
 				refreshBoard();
-				/*
-				System.out.println(board.BOARD[2]);
-				System.out.println(board.getBoardElementPosition(16));
+				System.out.println("-----");
+				for (int i=0;i<4; i++) {
+				System.out.print("pion"+i+" "+player[activePlayer].pawn[i].getActive()+" ");
+				System.out.print("left "+player[activePlayer].pawn[i].getLeft()+" ");
+				System.out.print("pos "+player[activePlayer].pawn[i].getPosition()+" ");
+				System.out.println("pot "+player[activePlayer].pawn[i].getPotentialPosition()+" ");}
+				buttonRoll.setEnabled(false);
 				
-				System.out.println(activePlayer);
 				
-				System.out.println(activePlayer);
-				System.out.println(player[activePlayer].getAditionalMove());
-				*/
+				if(!isActivePawn()) {
 
+					playerChange();
+					refreshBoard();
+					buttonRoll.setEnabled(true);	
+				}
 
+			}else if (e.getSource() == butt[player[activePlayer].pawn[0].getPosition()]){
+				if (!buttonRoll.isEnabled() && player[activePlayer].pawn[0].getActive()) 
+					{
+					movePawn(0);
+					buttonRoll.setEnabled(true);	
+					playerChange();
+					refreshBoard();
+					}
+			}else if (e.getSource() == butt[player[activePlayer].pawn[1].getPosition()]){
+				if (!buttonRoll.isEnabled() && player[activePlayer].pawn[1].getActive()) 
+					{
+					movePawn(1);
+					buttonRoll.setEnabled(true);	
+					playerChange();
+					refreshBoard();
+					}
+			}else if (e.getSource() == butt[player[activePlayer].pawn[2].getPosition()]){
+				if (!buttonRoll.isEnabled() && player[activePlayer].pawn[2].getActive()) 
+					{
+					movePawn(2);
+					buttonRoll.setEnabled(true);	
+					playerChange();
+					refreshBoard();
+					}
+			}else if (e.getSource() == butt[player[activePlayer].pawn[3].getPosition()]){
+				if (!buttonRoll.isEnabled() && player[activePlayer].pawn[3].getActive()) 
+					{
+					movePawn(3);
+					buttonRoll.setEnabled(true);	
+					playerChange();
+					refreshBoard();
+					}
 			}
-			
 		}
-		
 	}
 }

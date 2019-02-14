@@ -8,6 +8,7 @@ public class Pawn {
 	private boolean home;
 	private boolean go;
 	private boolean safe;
+	private boolean active;
 	
 	public int getPosition () {return position;}
 	public int getHomePosition () {return homePosition;}
@@ -16,6 +17,7 @@ public class Pawn {
 	public boolean getHome () {return home;}
 	public boolean getGo () {return go;}
 	public boolean getSafe () {return safe;}
+	public boolean getActive () {return active;}
 	
 	public void setPosition (int position) {this.position = position;}
 	public void setHomePosition (int position) {this.homePosition = position;}
@@ -24,6 +26,7 @@ public class Pawn {
 	public void setHome (boolean b) {this.home = b;}
 	public void setGo (boolean b) {this.go = b;}
 	public void setSafe (boolean b) {this.safe = b;}
+	public void setActive (boolean b) {this.active = b;}
 	
 	public void movePawn(int manyPositions) {		
 		this.position = this.position + manyPositions;
