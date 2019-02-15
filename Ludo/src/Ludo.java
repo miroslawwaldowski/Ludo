@@ -25,7 +25,7 @@ public class Ludo extends JFrame {
 	public static Color Cred = new Color(255,99,71);
 	public static Color Cyellow = new Color(255,215,0);
 	public static Color Cgreen = new Color(50,250,50);
-	public ImageIcon PawnIconDisable = new ImageIcon (PawnImage.PawnIcon());
+
 	
 	Dice dice = new Dice();
 	Board board = new Board();
@@ -123,7 +123,6 @@ public class Ludo extends JFrame {
  		number.setHorizontalAlignment(JLabel.CENTER);
  		typePlayer.setHorizontalAlignment(JLabel.CENTER);
  		name.setHorizontalAlignment(JLabel.CENTER);
- 	
  		
  		thePanel.add(number);
  		thePanel.add(typePlayer);
@@ -147,20 +146,15 @@ public class Ludo extends JFrame {
  		buttonStart = new JButton("Start");
  		buttonClose = new JButton("Zamknij");
  		
-
- 		
  		buttonStart.setBounds(50, 190, 160, 40);
  		buttonClose.setBounds(230, 190, 160, 40);
  		
  		buttonStart.addActionListener(new buttonStartMenuListener());
  		buttonClose.addActionListener(new buttonStartMenuListener());
  		
- 		
- 		
  		thePanel.add(buttonStart);
  		thePanel.add(buttonClose);
- 		
- 		
+ 			
  		this.add(thePanel);        
         this.setVisible(true);
 		}
@@ -214,11 +208,11 @@ public class Ludo extends JFrame {
          buttonRoll.addActionListener(new buttonMainWindowListener());
          
          score = new JLabel();
-         score.setBounds(170, height - buttonHeight - 110, buttonWidth, buttonHeight);
+         score.setBounds(170, height - buttonHeight - 110, 52, 52);
          score.setBorder(border);
+         score.setVerticalAlignment(JLabel.CENTER);
          score.setHorizontalAlignment(JLabel.CENTER);
-         
-         
+                 
          textArea = new JTextArea("",1,22);
          textArea.setEditable(false);
          textArea.setLineWrap(true);
@@ -241,7 +235,6 @@ public class Ludo extends JFrame {
          refreshBoard();
 		 }
 		
-
 		private void setBoardColor() {
 			for (int i=0;i<9;i++) {
 		 		 int YellowTablica [] = {0,1,7,8,20,32,33,34,35};
@@ -267,7 +260,8 @@ public class Ludo extends JFrame {
 	        return result;
 		}
 	}
-	
+
+
 	public void refreshBoard() {
 		
 		for (int z=0; z<butt.length;z++) {
@@ -276,10 +270,7 @@ public class Ludo extends JFrame {
 		for (int i=0;i<4;i++) {
         	 if (player[i].getActive()) {
         		 for (int j=0;j<4;j++) {
-        			 //if (player[activePlayer].pawn[j].getActive()) {
  					 butt[player[i].pawn[j].getPosition()].setIcon(player[i].getPawnIcon());
-        			 //}else { butt[player[i].pawn[j].getPosition()].setIcon(PawnIconDisable);
-        			 //}
 				 }
         	  }
  			}
@@ -300,13 +291,26 @@ public class Ludo extends JFrame {
 				break;
 				}
 			}
-
 		StartMenu.dispose();
 
 		MainWindow = new MainWindow();
 		buttonRoll.setBackground(player[activePlayer].getColor());
 		
-
+		switch (player[activePlayer].getTypPlayerSet()) {
+		case 0:
+			buttonRoll.setEnabled(true);
+			break;
+		case 1:
+			buttonRoll.setEnabled(false);
+			AI();
+			break;
+		case 2:
+			buttonRoll.setEnabled(false);
+			AI();
+			break;
+		case 3:
+			break;
+		}
 	}
 	
 	public void playerChange() {
@@ -315,12 +319,32 @@ public class Ludo extends JFrame {
 		if (player[activePlayer].getActive()==false) {playerChange();}
 		player[activePlayer].setDiceScore(0);
 		buttonRoll.setBackground(player[activePlayer].getColor());
+		switch (player[activePlayer].getTypPlayerSet()) {
+		case 0:
+			buttonRoll.setEnabled(true);
+			System.out.println("czlowik");
+			break;
+		case 1:
+			buttonRoll.setEnabled(false);
+			System.out.println("Ai latwe");
+			AI();
+			break;
+		case 2:
+			buttonRoll.setEnabled(false);
+			System.out.println("Ai trudne");
+			AI();
+			break;
+		case 3:
+			break;
+		}
+		
 	}
 
 	public void diceRoll() {
 		dice.throwDice();
 		player[activePlayer].setDiceScore((int)dice.getScore());
-		score.setText(Integer.toString(player[activePlayer].getDiceScore()));
+		score.setIcon(new ImageIcon (DiceImage.DiceIcon(player[activePlayer].getColor(),(byte)player[activePlayer].getDiceScore())));
+		setComunicate("Wypad³o "+player[activePlayer].getDiceScore());
 		if (player[activePlayer].getDiceScore()==6) {
 				player[activePlayer].setAditionalMove(true);
 		}else {
@@ -333,16 +357,18 @@ public class Ludo extends JFrame {
 		for (int i=0;i<4;i++) {
 			player[activePlayer].pawn[i].setPotentialPosition(player[activePlayer].pawn[i].getPosition());
 			player[activePlayer].pawn[i].setActive(false);
+			player[activePlayer].pawn[i].setPotentialPower(-1);
 			
 			if (player[activePlayer].pawn[i].getHome() && (player[activePlayer].getDiceScore()!=6)) {
 				player[activePlayer].pawn[i].setLeft(-99);
 			}
-			else 
+			else
 			if (player[activePlayer].pawn[i].getHome() && player[activePlayer].getDiceScore()==6) {
 				player[activePlayer].pawn[i].setPotentialPosition(player[activePlayer].getStartPoisition());
 				if(isBoardFreeByPlayer(i)) {
 					player[activePlayer].pawn[i].setLeft(board.BOARD.length-1);
 					player[activePlayer].pawn[i].setActive(true);
+					player[activePlayer].pawn[i].setPotentialPower(1);
 				}
 			}else 
 			if (player[activePlayer].pawn[i].getGo()){								
@@ -352,22 +378,22 @@ public class Ludo extends JFrame {
 					int x = board.getBoardElementPosition(player[activePlayer].pawn[i].getPosition());
 					x = x + player[activePlayer].getDiceScore();
 					if (x >= board.BOARD.length) {x= x-board.BOARD.length;}
-					player[activePlayer].pawn[i].setPotentialPosition(board.BOARD[x]);
-					setWhenFree(i);
-				}else if (player[activePlayer].pawn[i].getLeft()>-4){
+					player[activePlayer].pawn[i].setPotentialPosition(board.BOARD[x]);				
+					setWhenFree(i,2);
+				}else if (player[activePlayer].pawn[i].getLeft()>-5){
 					int l = -(player[activePlayer].pawn[i].getLeft())-1;			
 					switch (activePlayer) {
 					case 0:	player[activePlayer].pawn[i].setPotentialPosition(board.YellowArray[l]);
-							setWhenFree(i);				
+							setWhenFree(i,3);				
 							break;
 					case 1:	player[activePlayer].pawn[i].setPotentialPosition(board.GreenArray[l]);
-							setWhenFree(i);			
+							setWhenFree(i,3);			
 							break;
 					case 2: player[activePlayer].pawn[i].setPotentialPosition(board.RedArray[l]);
-							setWhenFree(i);				
+							setWhenFree(i,3);				
 							break;
 					case 3: player[activePlayer].pawn[i].setPotentialPosition(board.BlueArray[l]);
-							setWhenFree(i);				
+							setWhenFree(i,3);				
 							break;
 					}
 				}else {
@@ -379,16 +405,16 @@ public class Ludo extends JFrame {
 				if (y<4) {
 				switch (activePlayer) {
 				case 0:	player[activePlayer].pawn[i].setPotentialPosition(board.YellowArray[y]);
-						setWhenFree(i);
+						setWhenFree(i,4);
 						break;
 				case 1:	player[activePlayer].pawn[i].setPotentialPosition(board.GreenArray[y]);
-						setWhenFree(i);
+						setWhenFree(i,4);
 						break;
 				case 2: player[activePlayer].pawn[i].setPotentialPosition(board.RedArray[y]);
-						setWhenFree(i);
+						setWhenFree(i,4);
 						break;
 				case 3: player[activePlayer].pawn[i].setPotentialPosition(board.BlueArray[y]);
-						setWhenFree(i);
+						setWhenFree(i,4);
 						break;
 					}//switch
 				}//if (y<4)
@@ -415,13 +441,16 @@ public class Ludo extends JFrame {
 				player[activePlayer].pawn[i].setGo(false);
 				player[activePlayer].pawn[i].setSafe(true);
 			}
-
 		player[activePlayer].pawn[i].setPosition(player[activePlayer].pawn[i].getPotentialPosition());
 		setWhenKill(i);
 		}
-		
-		
-		
+		if (isWinner()>-1) {
+			buttonRoll.setEnabled(false);
+			for (int z=0; z<butt.length;z++) {
+				butt[z].setEnabled(false);;
+			}
+			JOptionPane.showMessageDialog(null,"Wygranym graczem jest "+player[isWinner()].getName(), "Gratulacje", JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
 	
 	public boolean isActivePawn() {
@@ -444,9 +473,10 @@ public class Ludo extends JFrame {
 		return x;
 	}
 	
-	public void setWhenFree(int i) {
+	public void setWhenFree(int i,int p) {
 		if (isBoardFreeByPlayer(i)) {
 			player[activePlayer].pawn[i].setActive(true);
+			player[activePlayer].pawn[i].setPotentialPower(p);
 		}else {
 			player[activePlayer].pawn[i].setActive(false);
 		}					
@@ -464,7 +494,7 @@ public class Ludo extends JFrame {
 						player[k].pawn[j].setLeft(-99);
 						player[k].pawn[j].setSafe(false);
 						player[k].pawn[j].setPosition(player[k].pawn[j].getHomePosition());
-						
+						setComunicate("Zbi³ pion gracza :"+player[k].getName());
 					}
 				}
 			}
@@ -514,6 +544,115 @@ public class Ludo extends JFrame {
 		return x;
 	}
 	
+	private void CanKill() {
+		for (int k=0;k<4; k++) { //gracze
+			for (int j=0;j<4; j++) { //ich piony
+				for (int i=0;i<4;i++) { //piony gracza
+					if(player[activePlayer].pawn[i].getActive()) {
+						if (k != activePlayer) {
+							if (player[activePlayer].pawn[i].getPotentialPosition() == player[k].pawn[j].getPosition()) {
+								player[activePlayer].pawn[i].setPotentialPower(10);
+							}
+						}	
+					}
+				}
+			}
+		}
+	}
+
+	public void AI() {
+		diceRoll();
+		gamePlay();
+		CanKill();
+		if(player[activePlayer].getTypPlayerSet()==1) {//hard
+			loop: for(int z=0;z<1;z++) {
+				for (int i=0;i<4;i++) {//can kill
+					if (player[activePlayer].pawn[i].getPotentialPower()==10) {
+						movePawn(i);
+						refreshBoard();
+						break loop;
+					}
+				}
+				for (int i=0;i<4;i++) {//go out
+					if (player[activePlayer].pawn[i].getPotentialPower()==1) {
+						movePawn(i);
+						refreshBoard();
+						break loop;
+					}
+				}
+				for (int i=0;i<4;i++) {//move to home
+					if (player[activePlayer].pawn[i].getPotentialPower()==3) {
+						movePawn(i);
+						refreshBoard();
+						break loop;
+					}
+				}
+				for (int i=0;i<4;i++) {//move on board
+					if (player[activePlayer].pawn[i].getPotentialPower()==2) {
+						movePawn(i);
+						refreshBoard();
+						break loop;
+					}
+				}
+				for (int i=0;i<4;i++) {//move at home
+					if (player[activePlayer].pawn[i].getPotentialPower()==4) {
+						movePawn(i);
+						refreshBoard();
+						break loop;
+					}		
+				}
+			}
+		}else if(player[activePlayer].getTypPlayerSet()==2) {//easy
+			loop: for(int z=0;z<1;z++) {
+				for (int i=0;i<4;i++) {//go out
+					if (player[activePlayer].pawn[i].getPotentialPower()==1) {
+						movePawn(i);
+						refreshBoard();
+						break loop;
+					}
+				}
+				for (int i=0;i<4;i++) {//move on board
+					if (player[activePlayer].pawn[i].getPotentialPower()==2) {
+						movePawn(i);
+						refreshBoard();
+						break loop;
+					}
+				}
+				for (int i=0;i<4;i++) {//move to home
+					if (player[activePlayer].pawn[i].getPotentialPower()==3) {
+						movePawn(i);
+						refreshBoard();
+						break loop;
+					}
+				}
+				for (int i=0;i<4;i++) {//move at home
+					if (player[activePlayer].pawn[i].getPotentialPower()==4) {
+						movePawn(i);
+						refreshBoard();
+						break loop;
+					}
+				}
+				for (int i=0;i<4;i++) {//can kill
+					if (player[activePlayer].pawn[i].getPotentialPower()==10) {
+						movePawn(i);
+						refreshBoard();
+						break loop;
+					}		
+				}
+			}
+		}
+		
+		if (player[activePlayer].getAditionalMove()) {
+			player[activePlayer].setAditionalMove(false);
+			AI();
+		}
+		if (!(isWinner()>-1)) {
+			playerChange();
+		}else{
+			buttonRoll.setEnabled(false);	
+		}
+	}
+		
 	class typPlayerListener implements ItemListener {
 
 		@Override
@@ -586,25 +725,23 @@ public class Ludo extends JFrame {
 				diceRoll(); 
 				gamePlay(); 
 				refreshBoard();
-				
-				System.out.println("-----");
-				for (int i=0;i<4; i++) {
-				System.out.print("pion"+i+" "+player[activePlayer].pawn[i].getActive()+" ");
-				System.out.print("left "+player[activePlayer].pawn[i].getLeft()+" ");
-				System.out.print("pos "+player[activePlayer].pawn[i].getPosition()+" ");
-				System.out.println("pot "+player[activePlayer].pawn[i].getPotentialPosition()+" ");
-				}
-				
+//				System.out.println("-----");
+//				for (int i=0;i<4; i++) {
+//				System.out.print("pion"+i+" "+player[activePlayer].pawn[i].getActive()+" ");
+//				System.out.print("left "+player[activePlayer].pawn[i].getLeft()+" ");
+//				System.out.print("pos "+player[activePlayer].pawn[i].getPosition()+" ");
+//				System.out.println("pot "+player[activePlayer].pawn[i].getPotentialPosition()+" ");
+//				}
 				buttonRoll.setEnabled(false);
 								
 				if(!isActivePawn()) {
-					
-					if (!player[activePlayer].getAditionalMove()) {
+					if (player[activePlayer].getAditionalMove()) {
+						refreshBoard();
+						buttonRoll.setEnabled(true);
+					}else {
 						playerChange();
 						setComunicate("Rzuæ kostk¹!");
-					}
-					refreshBoard();
-					buttonRoll.setEnabled(true);	
+						}
 				}else {
 					setComunicate("IdŸ Pionem!");
 				}
@@ -631,20 +768,18 @@ public class Ludo extends JFrame {
 					}
 			}
 		}//actionPerformed
-		
-		public void buttonPawnMowe(int i) {
-			movePawn(i);
-			
-			if (isWinner()>-1) {
-				System.out.println(isWinner());
-			}
-			
-			if (!player[activePlayer].getAditionalMove()) {
+	}
+	
+	public void buttonPawnMowe(int i) {
+		movePawn(i);
+		refreshBoard();
+		if (isWinner()<0) {
+				if (!player[activePlayer].getAditionalMove()) {
 				playerChange();
 			}
-			setComunicate("Rzuæ kostk¹!");
-			buttonRoll.setEnabled(true);
-			refreshBoard();
 		}
+		setComunicate("Rzuæ kostk¹!");
+		buttonRoll.setEnabled(true);
+		refreshBoard();
 	}
 }

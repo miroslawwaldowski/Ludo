@@ -17,16 +17,6 @@ public class PawnImage {
 		
 		return bufferedImage;
 	}
-	
-	public static Image PawnIcon () {
-		BufferedImage bufferedImage = new BufferedImage(25, 25,BufferedImage.TYPE_4BYTE_ABGR );
-		Graphics g = bufferedImage.getGraphics();
-		g.setColor(Color.black);
-		g.fillOval(0,0,24,24);
-		g.setColor(Color.gray);
-		g.fillOval(2,2,20,20);
-		
-		return bufferedImage;
-	}
+
 
 }
